@@ -1,5 +1,6 @@
 package com.example.Authentication.User;
 
+import com.example.Authentication.Login.LoginRequest;
 import com.example.Authentication.Registration.Token.ConfirmationToken;
 import com.example.Authentication.Registration.Token.TokenService;
 import lombok.AllArgsConstructor;
@@ -49,5 +50,17 @@ public class UserService implements UserDetailsService {
 
     public int enableUser(String email) {
         return userRepository.enableUser(email);
+    }
+
+    public void loginUser(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new RuntimeException("User not found: " + request.getEmail()));
+
+        if (!request.getPassword().equals(user.getPassword())) {
+            throw new RuntimeException("Wrong password");
+
+        } else if (!user.isEnabled()) {
+            throw new RuntimeException("User is disabled");
+        }
     }
 }

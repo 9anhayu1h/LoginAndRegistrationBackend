@@ -26,7 +26,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests(customizer ->
                         customizer
-                                .requestMatchers("/api/v*/registration/**")
+                                .requestMatchers("/api/v*/registration/**", "/api/v*/login/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

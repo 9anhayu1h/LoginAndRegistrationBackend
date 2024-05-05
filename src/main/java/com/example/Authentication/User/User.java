@@ -28,11 +28,8 @@ public class User implements UserDetails {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "firstname")
-    private String firstname;
-
-    @Column(name = "lastname")
-    private String lastname;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "email")
     private String email;
@@ -50,9 +47,8 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private boolean enabled = false;
 
-    public User(String firstname, String lastname, String email, String password, AppUserRole appUserRole) {
-        this.firstname = firstname;
-        this.lastname = lastname;
+    public User(String username, String email, String password, AppUserRole appUserRole) {
+        this.username = username;
         this.email = email;
         this.password = password;
         this.appUserRole = appUserRole;
@@ -64,13 +60,7 @@ public class User implements UserDetails {
         return Collections.singletonList(authority);
     }
 
-    public String getFirstName() {
-        return firstname;
-    }
-
-    public String getLastName() {
-        return lastname;
-    }
+    public String getName() {return username;}
 
     @Override
     public String getPassword() {
