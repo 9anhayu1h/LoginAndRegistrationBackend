@@ -1,33 +1,37 @@
 package com.example.Authentication.Login;
 
-import com.example.Authentication.Registration.EmailValidator;
-import com.example.Authentication.User.User;
-import com.example.Authentication.User.UserRepository;
-import com.example.Authentication.User.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 @Data
 @AllArgsConstructor
+@Service
 public class LoginService {
 
-    private final UserService userService;
-    private LoginRequest request;
-    private final EmailValidator emailValidator;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthenticationManager authenticationManager;
+
 
     public String login(LoginRequest request) {
-        boolean isValidEmail = emailValidator.test(request.getEmail());
-        if(!isValidEmail) {
-            throw new IllegalStateException("email not valid");
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            return "User " + request.getEmail() + " logged in";
+        } catch (BadCredentialsException e) {
+            return "Invalid email or password";
+        } catch (DisabledException e) {
+            return "User account is disabled";
+        } catch (AuthenticationException e) {
+            return "Authentication failed: " + e.getMessage();
         }
-
-        String encodedPassword =bCryptPasswordEncoder.encode(request.getPassword());
-        request.setPassword(encodedPassword);
-
-        userService.loginUser(request);
-
-        return "login_success";
     }
 }

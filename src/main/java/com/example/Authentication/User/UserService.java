@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException("email already taken");
         }
 
-        String encodedPassword =bCryptPasswordEncoder.encode(user.getPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 
         user.setPassword(encodedPassword);
 
@@ -50,17 +50,5 @@ public class UserService implements UserDetailsService {
 
     public int enableUser(String email) {
         return userRepository.enableUser(email);
-    }
-
-    public void loginUser(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new RuntimeException("User not found: " + request.getEmail()));
-
-        if (!request.getPassword().equals(user.getPassword())) {
-            throw new RuntimeException("Wrong password");
-
-        } else if (!user.isEnabled()) {
-            throw new RuntimeException("User is disabled");
-        }
     }
 }
